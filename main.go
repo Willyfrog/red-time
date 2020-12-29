@@ -14,7 +14,7 @@ func main() {
 	mbot := gobot.NewMaster()
 	server := api.NewAPI(mbot)
 	// server.AddHandler(api.BasicAuth("gort", "klaatu"))
-	server.Port = "3000"
+	server.Port = "3000" // TODO: accept a flag to setup the port
 	server.Start()
 
 	mbot.AddCommand("start",
@@ -55,6 +55,10 @@ func main() {
 			createTimer(f, delay)
 			return "This command is attached to the mcp!"
 		})
+	err := mbot.Start()
+	if err != nil {
+		_ = mbot.Stop()
+	}
 }
 
 func createTimer(fstop float64, delay float64) {
