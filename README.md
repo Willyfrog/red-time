@@ -1,5 +1,7 @@
 # Red Time
 
+![logo](./red-light-logo.png)
+
 ## Description
 
 This is a small piece of software to run on a raspberry to help manage a photographic enlarger by using a f-stop like timer.
@@ -23,7 +25,10 @@ Usually port will be `:3000` at $REDTIMEHOST
 This is a POST command, use json as the body request.
 
 #### start
-URL: host:port/api/commands/start
+
+URL
+: host:port/api/commands/start
 Parameters:
+
 - `fstops` _float_ number of f-stops to use the enlarger.
 - `delay` _float_ number of seconds until the enlarger is turned on. This is useful to have some time to turn off the screen in case of color enlargement or if no red filter is used for black and white photography
