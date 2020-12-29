@@ -16,10 +16,14 @@ In order to make everything easier, I'll recommend to setup your ssh config to l
 
 ## API
 
-usually port will be `:3000` at $REDTIMEHOST
+Usually port will be `:3000` at $REDTIMEHOST
 
 ### Commands
 
+This is a POST command, use json as the body request.
+
 #### start
-- fstops <float> number of f-stops to use the enlarger.
-- delay <float> number of seconds until the enlarger is turned on. This is useful to have some time to turn off the screen in case of color enlargement or if no red filter is used for black and white photography
+URL: host:port/api/commands/start
+Parameters:
+- `fstops` _float_ number of f-stops to use the enlarger.
+- `delay` _float_ number of seconds until the enlarger is turned on. This is useful to have some time to turn off the screen in case of color enlargement or if no red filter is used for black and white photography
