@@ -10,3 +10,6 @@ clean:
 
 run: copy
 	ssh $$REDTIMEHOST ./red-time
+
+kill:
+	ssh $$REDTIMEHOST killall red-time
