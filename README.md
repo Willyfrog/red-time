@@ -1,6 +1,6 @@
 # Red Time
 
-![logo](./red-light-logo.png)
+<img src="img/red-light-logo.png" width=100 height=100/>
 
 ## Description
 
