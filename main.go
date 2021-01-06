@@ -1,80 +1,38 @@
 package main
 
 import (
+	"log"
 	"math"
-	"strconv"
+	"net/http"
 
-	"github.com/prometheus/common/log"
-	"gobot.io/x/gobot"
-	"gobot.io/x/gobot/api"
-	"gobot.io/x/gobot/drivers/gpio"
+	"github.com/warthog618/gpiod"
+
+	"github.com/Willyfrog/red-time/server"
 )
 
 func main() {
-	mbot := gobot.NewMaster()
-	server := api.NewAPI(mbot)
-	// server.AddHandler(api.BasicAuth("gort", "klaatu"))
-	server.Port = "3000" // TODO: accept a flag to setup the port
-	server.Start()
-
-	mbot.AddCommand("start",
-		func(params map[string]interface{}) interface{} {
-			fstops, exists := params["fstops"]
-			if !exists {
-				log.Errorln("No steps especified, ignoring!")
-				return nil //TODO: 400?
-			}
-			var f float64
-			var delay float64
-			var err error
-			switch val := fstops.(type) {
-			case string:
-				f, err = strconv.ParseFloat(val, 64)
-				if err != nil {
-					log.Errorf("fstops value can't be converted to a float64")
-					return nil
-				}
-			case float64:
-				f = val
-			case int:
-				f = float64(val)
-			}
-			d, exists := params["delay"]
-			if !exists {
-				delay = 0
-			} else {
-				switch del := d.(type) {
-				case string:
-					delay, err = strconv.ParseFloat(del, 64)
-					if err != nil {
-						log.Errorf("delay value can't be converted to a float64")
-						return nil
-					}
-				}
-			}
-			createTimer(f, delay)
-			return "This command is attached to the mcp!"
-		})
-	err := mbot.Start()
-	if err != nil {
-		_ = mbot.Stop()
-	}
+	c, _ := gpiod.NewChip("gpiochip0", gpiod.WithConsumer("softwire"))
+	Port := 3000 // TODO: accept a flag to setup the port
+	s := server.New()
+	log.Fatal(http.ListenAndServe(":8080", s.Router()))
+	log.Printf("Server will be running in post %d", Port)
+	defer c.Close()
 }
 
 func createTimer(fstop float64, delay float64) {
-	log.Infof("Created timer with %f (%f s) starting after %f", fstop, fStop2Second(fstop), delay)
+	log.Printf("Created timer with %f (%f s) starting after %f", fstop, fStop2Second(fstop), delay)
 }
 
-func turnOn(led *gpio.LedDriver) {
-	err := led.On()
+func turnOn(led *gpiod.Line) {
+	err := led.SetValue(1)
 	if err != nil {
-		log.Errorf("There was an error turning ON the LED: %e\n", err)
+		log.Printf("There was an error turning ON the LED: %e\n", err)
 	}
 }
-func turnOff(led *gpio.LedDriver) {
-	err := led.Off()
+func turnOff(led *gpiod.Line) {
+	err := led.SetValue(0)
 	if err != nil {
-		log.Errorf("There was an error turning OFF the LED: %e\n", err)
+		log.Printf("There was an error turning OFF the LED: %e\n", err)
 	}
 }
 
